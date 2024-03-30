@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+  <title>JNTUACEK | Admin Results Portal</title>
+  <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'><link rel="stylesheet" href="./style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <style>
+        @media (max-width: 420px) {
+            .students{
+                margin-left: 0px;
+                padding-left: 0%;
+                transform: translateX(0px);
+                width: 90%;
+            }
+            .students-table{
+                margin-left: 0px;
+                transform: translateX(180px);
+            }
+        }
+    </style>
+</head>
+<body onload="changeLink()">
+<!-- partial:index.partial.html -->
+<div class="sidebar">
+  <div class="logo-details">
+    <div class="logo_name">ADMIN PORTAL</div>
+    <i class='bx bx-menu' id="btn"></i>
+  </div>
+  <ul class="nav-list">
+    <li>
+      <a href="/">
+        <i class='bx bx-grid-alt'></i>
+        <span class="links_name">Dashboard</span>
+      </a>
+      <span class="tooltip">Dashboard</span>
+    </li>
+   
+    <li>
+      <a href="/students">
+        <i class='bx bx-group'></i>
+        <span class="links_name">Students</span>
+      </a>
+      <span class="tooltip">Students</span>
+    </li>
+    <li>
+      <a href="/regulations">
+        <i class='bx bx-receipt'></i>
+        <span class="links_name">Regulations</span>
+      </a>
+      <span class="tooltip">Regulations</span>
+    </li>
+    <li>
+      <a href="/AdminResults">
+        <i class='bx bx-folder'></i>
+        <span class="links_name">Results</span>
+      </a>
+      <span class="tooltip">Results</span>
+    </li>
+    <li>
+      <a href="/backlogs">
+        <i class='bx bx-log-out-circle' ></i>
+        <span class="links_name">Backlogs</span>
+      </a>
+      <span class="tooltip">Backlogs</span>
+    </li>
+    <li>
+      <a href="/scores">
+        <i class='bx bx-objects-vertical-bottom'></i>
+        <span class="links_name">Scores</span>
+      </a>
+      <span class="tooltip">Scores</span>
+    </li>
+    <li class="profile">
+      <div class="profile-details">
+        <img src="https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg" alt="profileImg" class="profile-img">
+        <div class="name_job">
+          <div class="name">Admin </div>
+          <div class="job">JNTUACEK Results Admin</div>
+        </div>
+      </div>
+      <i class='bx bx-log-out' id="log_out"></i>
+    </li>
+  </ul>
+</div>
+<section class="home-section">
+  <div class="text">Regulations</div>
+  <div class="all-options">
+    <div class="hr"></div>
+    <div class="edit-options">
+        <div class="add-student"><button onclick="openPopup()"><i class='bx bx-plus-medical'></i> Regulation/Exam</button></div>
+    </div>
+        <div class="filters">
+            <label for="studentRows"> Show
+            <select name="studentRows" id="studentRows" oninput="changeLink()">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            Entries
+        </label>
+        <label for="studentSearch">Search: 
+            <input type="search" name="studentSearch" id="studentSearch" oninput="changeLink()" placeholder="ex:I year I Semester (R20) regular Examinations, month year..."></label>
+    </div>
+</div>
+    <div class="students">
+        <table class="students-table" id="myTable">
+          <thead>
+            <tr>
+            <th>Select</th>
+            <th >S.No</th>
+            <th>Regulation</th>
+            <th>Academic Year</th>
+            <th>Academic Sem</th>
+            <th>Regular/Supplementary</th>
+            <th>Month of Exam</th>
+            <th>Year of exam</th>
+            <th>Tools</th>
+            </tr>
+          </thead>
+          <tbody id = "tableBody">
+
+          </tbody>
+            
+        </table>
+  </div>
+  <button id="deleteButton" class="delete" style="margin: 10px 0 10px 75px;"><i class="bx bx-trash"></i>Delete Selected Rows</button>
+  <div class="paging" id="paging">
+    </div>
+
+</section>
+<div id="popup" class="popup" style="left: 34%;">
+  <h2><i class="bx bx-info-circle"></i> Information</h2><br><hr><br>
+  <p class="add-info">-- You can add regulations while uploading results</p>
+  <button onclick="closePopup()" class="close"><i class="bx bx-x"></i></button>
+</div>
+
+<div id="overlay" class="overlay"></div>
+<div class="delete-popup" id="delete-popup">
+  <h2 style="color: red;"><i class="bx bx-error"></i> Warning</h2><br><hr><br>
+  <p class="add-info">-- <u>Confirm your delete</u>: Are you sure you want to delete this record ?<br>Note that Deleting this record will result in deletion all results associated<br> with  this exam/regulation.</p>
+  <button onclick="closePopup3()" class="close"><i class="bx bx-x"></i></button>
+  <br><br>
+  <button onclick="deleteRecord()" class="delete" style="transform: scale(1.5);width: 60%;margin-left: 105px;"><i class="bx bx-trash"></i> Delete</button>
+</div>
+<input type="text" id="err" value="<%= err %>" hidden><input type="text" id="deleted" value="<%= deleted %>" hidden><input type="text" value="<%= updated%>" id="updated" hidden>
+
+<div id="edit-popup" style="left: 35%;">
+  <form class="flex-column" action="/updateRegulation" method="post">
+    <div class="popup-head"><h2>Update Regulation</h2></div>
+    <div class="flex-row-space-between">
+      <div class="flex-column">
+        <label for="editRollNumber">Academic Year</label>
+        <select  id = "editRollNumber" name = "editRollNumber" required>
+          <option value="1">I</option>
+          <option value="2">II</option>
+          <option value="3">III</option>
+          <option value="4">IV</option>
+        </select>
+      </div>
+      <div class="flex-column">
+    <label for="editStudentName">Academic Semester</label>
+    <select  id = "editStudentName" name = "editStudentName" required>
+        <option value="1">I</option>
+        <option value="2">II</option>
+      </select>
+  </div></div>
+  <div class="flex-row-space-between">
+    <div class="flex-column">
+
+    <label for="editBranch">Regulation</label>
+    <input type="text" id = "editBranch" name = "editBranch" placeholder="Regulation..." required></div>
+    <div class="flex-column">
+
+    <label for="editJoiningYear">Regular/Supplementary</label>
+    <select  id = "editJoiningYear" name = "editJoiningYear" required>
+        <option value="1">Regular</option>
+        <option value="0">Supplementary</option>
+      </select>
+  </div></div>
+  
+  <div class="flex-row-space-between">
+    <div class="flex-column">
+
+    <label for="editMonth">Exam Month</label>
+    <input type="text" id = "editMonth" name = "editMonth" placeholder="Exam Month..." required></div>
+    <div class="flex-column">
+
+    <label for="editYear">Exam Year</label>
+    <input type="text" id = "editYear" name = "editYear" placeholder="Exam Year..." required>
+  </div></div>
+   
+  <input type="text" id="id" name="id" hidden>
+    
+    <button type="button" onclick="closePopup4()" class="close"><i class="bx bx-x"></i></button>
+    <button type="submit" class="submit"><i class="bx bx-log-in-circle"></i> Update Details</button>
+    
+  </form>
+  </div>
+<script src="popup.js"></script>
+<!-- partial -->
+  <script  src="./script1.js"></script>
+<script>
+  
+var deleted = document.getElementById('deleted').value;
+var updated = document.getElementById('updated').value;
+err = document.getElementById('err').value;
+  if (deleted == 'false') { 
+      swal({
+        title: "Error!",
+        text: err,
+        icon: "error",
+        button: "OK"
+    }).then((value) => {
+      history.replaceState(null, null, '/regulations');
+    });
+   } 
+   else if(deleted == 'true') { 
+    swal({
+        title: "Success!",
+        text: "Record deleted successfully",
+        icon: "success",
+        button: "OK"
+    }).then((value) => {
+      history.replaceState(null, null, '/regulations');
+    });
+   } if(updated == 'true') { 
+    swal({
+        title: "Success!",
+        text: "Updated successfully!",
+        icon: "success",
+        button: "OK"
+    }).then((value) => {
+      history.replaceState(null, null, '/regulations');
+    });
+   } 
+
+   let link;
+function openPopup3(val) {
+    var popup = document.getElementById('delete-popup');
+    var overlay = document.getElementById('overlay');
+    document.getElementById('popup').style.display = 'none';
+    popup.style.display = 'block';
+    overlay.style.display = 'block';
+    link = 'deleteExam?id='+val;
+}
+
+function closePopup3() {
+    var popup = document.getElementById('delete-popup');
+    var overlay = document.getElementById('overlay');
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+}
+function deleteRecord(){
+    window.location=link;
+}
+function openPopup4(val1, val2, val3, val4, val5, val6, val7) {
+    var popup = document.getElementById('edit-popup');
+    var overlay = document.getElementById('overlay');
+    popup.style.display = 'block';
+    overlay.style.display = 'block';
+    setSelectOptionFromVariable(val2, 'editStudentName');
+    setSelectOptionFromVariable(val1, 'editRollNumber');
+    document.getElementById('editBranch').value = val3;
+    setSelectOptionFromVariable(val4, 'editJoiningYear');
+    document.getElementById('editMonth').value = val5;
+    document.getElementById('editYear').value = val6;
+    document.getElementById('id').value = val7;
+}
+
+
+function closePopup4() {
+    var popup = document.getElementById('edit-popup');
+    var overlay = document.getElementById('overlay');
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+}
+
+function changeLink(page) {
+  var searchTerm = document.getElementById('studentSearch').value;
+  var limit = document.getElementById('studentRows').value;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/regulationData?search=' + searchTerm + '&limit=' + limit+ '&page=' + page, true);
+  xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+              var responseData = JSON.parse(xhr.responseText);
+              updateData(responseData.regulations, responseData.totalPages, responseData.currentPage, responseData.prevPage, responseData.nextPage);
+          } else {
+              console.error('Error fetching data:', xhr.status);
+          }
+      }
+  };
+  xhr.send();
+}
+
+function toRoman(num) {
+    const romanNumeralMap = {
+        1: 'I',
+        2: 'II',
+        3: 'III',
+        4: 'IV'
+    };
+
+    return romanNumeralMap[num];
+}
+function regSep(num){
+    const rs = {
+        1 : "Regular/Supplementary",
+        0 : "Supplementary"
+    };
+    return rs[num];
+}
+function updateData(data, totalPages, currentPage, prevPage, nextPage) {
+  var tableBody = document.getElementById('tableBody');
+  var limit = document.getElementById('studentRows').value;
+  tableBody.innerHTML = '';
+  var index = (currentPage-1)*limit+1;
+  if(data.length === 0){tableBody.innerHTML = "No results Found";}
+  else{
+  data.forEach(function(exam) {
+      var row = document.createElement('tr');
+      row.innerHTML = `
+          <td><input type="checkbox" value="${exam.link_id}" oninput="showDel()"></td>
+          <td>${index++}</td>
+          <td>${exam.regulation}</td>
+          <td>${toRoman(exam.academic_year)}</td>
+          <td>${toRoman(exam.academic_sem)}</td>
+          <td>${regSep(exam.reg_or_sup)}</td>
+          <td>${exam.exam_month}</td>
+          <td>${exam.exam_year}</td>
+          <td><Button class="edit" onclick="openPopup4('${exam.academic_year}', '${exam.academic_sem}', '${exam.regulation}', '${exam.reg_or_sup}', '${exam.exam_month}', '${exam.exam_year}', '${exam.link_id}')"><i class="bx bx-edit-alt"></i> Edit</Button><button  onclick="openPopup3('${exam.link_id}' )" class="delete"><i class="bx bx-trash"></i> Delete</button></td>
+      `;
+      tableBody.appendChild(row);
+  });
+} 
+  var paginationControls = document.getElementById('paging');
+    paginationControls.innerHTML = '';
+    if (prevPage || nextPage) {
+        var paginationHTML = 'Page ' + currentPage + ' of ' + totalPages + ' ';
+        if (prevPage) {
+            paginationHTML += '<span onclick="changeLink(' + prevPage + ')">Previous</span> ';
+        }
+        if (nextPage) {
+            paginationHTML += '<span onclick="changeLink(' + nextPage + ')">Next</span>';
+        }
+        paginationControls.innerHTML = paginationHTML;
+    }
+}
+function showDel(){
+  document.getElementById('deleteButton').style.display = "block";
+}
+document.getElementById("deleteButton").addEventListener("click", function() {
+    var selectedRows = [];
+    var checkboxes = document.querySelectorAll("#myTable tbody input[type='checkbox']:checked");
+    checkboxes.forEach(function(checkbox) {
+      selectedRows.push(checkbox.value); 
+    });
+    if(selectedRows.length>0){
+    fetch('/deleteExams', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ selectedRows: selectedRows })
+    })
+    .then(response => {
+      if (response.ok) {
+       window.location = "/regulations?deleted=true";
+      } else {
+        window.location = "/regulations?deleted=true";
+      }
+    })
+    .catch(error => {
+      window.location = "/regulations?deleted=false&err="+error;
+    });}
+    else{
+      window.alert("No rows selected");
+    }
+  });
+
+</script>
+</body>
+</html>

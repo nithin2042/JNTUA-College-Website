@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JNTUACEK | Admin Results Portal</title>
+  <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'><link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="sidebar">
+  <div class="logo-details">
+    <div class="logo_name">ADMIN PORTAL</div>
+    <i class='bx bx-menu' id="btn"></i>
+  </div>
+  <ul class="nav-list">
+    <li>
+      <a href="/">
+        <i class='bx bx-grid-alt'></i>
+        <span class="links_name">Dashboard</span>
+      </a>
+      <span class="tooltip">Dashboard</span>
+    </li>
+   
+    <li>
+      <a href="/students">
+        <i class='bx bx-group'></i>
+        <span class="links_name">Students</span>
+      </a>
+      <span class="tooltip">Students</span>
+    </li>
+    <li>
+      <a href="/regulations">
+        <i class='bx bx-receipt'></i>
+        <span class="links_name">Exams</span>
+      </a>
+      <span class="tooltip">Exams</span>
+    </li>
+    <li>
+      <a href="/AdminResults">
+        <i class='bx bx-folder'></i>
+        <span class="links_name">Results</span>
+      </a>
+      <span class="tooltip">Results</span>
+    </li>
+    <li>
+      <a href="/backlogs">
+        <i class='bx bx-log-out-circle' ></i>
+        <span class="links_name">Backlogs</span>
+      </a>
+      <span class="tooltip">Backlogs</span>
+    </li>
+    <li>
+      <a href="/scores">
+        <i class='bx bx-objects-vertical-bottom'></i>
+        <span class="links_name">Scores</span>
+      </a>
+      <span class="tooltip">Scores</span>
+    </li>
+    <li class="profile">
+      <div class="profile-details">
+        <img src="https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg" alt="profileImg" class="profile-img">
+        <div class="name_job">
+          <div class="name">Admin </div>
+          <div class="job">JNTUACEK Results Admin</div>
+        </div>
+      </div>
+      <i class='bx bx-log-out' id="log_out"></i>
+    </li>
+  </ul>
+</div>
+<section class="home-section">
+  <div class="text">Dashboard</div>
+  <div class="dashboard-boxes">
+    <a href="/students"><div class="box">
+      <div class="box-icon"><i class='bx bx-user'></i></div>
+      <div class="box-name"><div class="t">Students</div></div> 
+    </div></a>
+    <a href="/regulations"><div class="box">
+      <div class="box-icon"><i class='bx bx-receipt'></i></div>
+      <div class="box-name"><div class="t">Exams</div></div> 
+    </div></a>
+    <a href="/AdminResults"><div class="box">
+      <div class="box-icon"><i class='bx bx-food-menu'></i></div>
+      <div class="box-name"><div class="t">Results</div></div> 
+    </div></a>
+    <div class="hr" style="width:90%"></div>
+  </div>
+  <div class="latest-modifications">
+    <div class="text">Latest Results</div>
+    <div class="modifications">
+      <table class="modifications-table">
+        <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Exam Name</th>
+          <th>Release Date</th>
+        </tr>
+      </thead>
+        <%
+                function toRoman(num) {
+                    const romanNumeralMap = {
+                        1: 'I',
+                        2: 'II',
+                        3: 'III',
+                        4: 'IV'
+                    };
+                
+                    return romanNumeralMap[num];
+                }
+                function regSep(num){
+                    const rs = {
+                        1 : "Regular/Supplementary",
+                        0 : "Supplementary"
+                    };
+                    return rs[num];
+                }
+                %>  
+                <tbody>
+        <% i=1 %>
+        <% regulations.forEach(function(regulation1) { %>
+        <tr>
+          <td><%= i++ %></td>
+          <td>
+            B.Tech <%= toRoman(regulation1.academic_year) %> Year <%= toRoman(regulation1.academic_sem) %> Semester (<%= regulation1.regulation %>) <%= regSep(regulation1.reg_or_sup) %> Examinations, <%= regulation1.exam_month %> <%= regulation1.results_date.getFullYear() %> 
+        </td>
+          <td><%= regulation1.results_date.toDateString() %></td>
+        </tr>
+        <%}); %>
+      </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<!-- partial -->
+  <script  src="script1.js"></script>
+
+</body>
+</html>

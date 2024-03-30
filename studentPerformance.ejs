@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>JNTUACEK | Admin Results Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'><link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <style>
+        @media (max-width: 420px) {
+            .students{
+                margin-left: 0px;
+                padding-left: 0%;
+                transform: translateX(0px);
+                width: 90%;
+            }
+            .students-table{
+                margin-left: 0px;
+                transform: translateX(100px);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="logo-details">
+    <div class="logo_name">ADMIN PORTAL</div>
+    <i class='bx bx-menu' id="btn"></i>
+  </div>
+  <ul class="nav-list">
+    <li>
+      <a href="/">
+        <i class='bx bx-grid-alt'></i>
+        <span class="links_name">Dashboard</span>
+      </a>
+      <span class="tooltip">Dashboard</span>
+    </li>
+   
+    <li>
+      <a href="/students">
+        <i class='bx bx-group'></i>
+        <span class="links_name">Students</span>
+      </a>
+      <span class="tooltip">Students</span>
+    </li>
+    <li>
+      <a href="/regulations">
+        <i class='bx bx-receipt'></i>
+        <span class="links_name">Regulations</span>
+      </a>
+      <span class="tooltip">Regulations</span>
+    </li>
+    <li>
+      <a href="/AdminResults">
+        <i class='bx bx-folder'></i>
+        <span class="links_name">Results</span>
+      </a>
+      <span class="tooltip">Results</span>
+    </li>
+    <li>
+      <a href="/backlogs">
+        <i class='bx bx-log-out-circle' ></i>
+        <span class="links_name">Backlogs</span>
+      </a>
+      <span class="tooltip">Backlogs</span>
+    </li>
+    <li>
+      <a href="/scores">
+        <i class='bx bx-objects-vertical-bottom'></i>
+        <span class="links_name">Scores</span>
+      </a>
+      <span class="tooltip">Scores</span>
+    </li>
+    <li class="profile">
+      <div class="profile-details">
+        <img src="https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg" alt="profileImg" class="profile-img">
+        <div class="name_job">
+          <div class="name">Admin </div>
+          <div class="job">JNTUACEK Results Admin</div>
+        </div>
+      </div>
+      <i class='bx bx-log-out' id="log_out"></i>
+    </li>
+  </ul>
+</div>
+<section class="Performance-section home-section">
+    <div class="card">
+        <div class="card__img"></div>
+        <div class="card__avatar"><img src="https://res.cloudinary.com/teepublic/image/private/s--6vDtUIZ---/t_Resized%20Artwork/c_fit,g_north_west,h_1054,w_1054/co_ffffff,e_outline:53/co_ffffff,e_outline:inner_fill:53/co_bbbbbb,e_outline:3:1000/c_mpad,g_center,h_1260,w_1260/b_rgb:eeeeee/c_limit,f_jpg,h_630,q_90,w_630/v1570281377/production/designs/6215195_0.jpg" alt="user"></div>
+        <div class="card__title"><%= allStudentsResult[0].student_name %></div>
+        <div class="card__subtitle"><%= allStudentsResult[0].roll_number %></div>
+        <div class="card__subtitle"><%= allStudentsResult[0].branch %> : <%= allStudentsResult[0].AY_admitted %></div>
+        <div class="card__wrapper">
+        </div>
+    </div>
+    <div class="text" style="margin-left: 40px;">
+        <h1>Preformance</h1>
+    </div>
+    
+    <% 
+    function toRoman(num) {
+             const romanNumeralMap = {
+                 1: 'I',
+                 2: 'II',
+                 3: 'III',
+                 4: 'IV'
+             };
+         
+             return romanNumeralMap[num];
+         }
+         function regSep(num){
+             const rs = {
+                 1 : "Regular/Supplementary",
+                 0 : "Supplementary"
+             };
+             return rs[num];
+         }
+         function gradetogpa(ch){
+                    const gd = {
+                        'S' : 10,
+                        'A' : 9,
+                        'B' : 8,
+                        'C' : 7,
+                        'D' : 6,
+                        'E' : 5, 
+                        'F' : 0
+                    }
+                    return gd[ch];
+                }
+    var totalcreditsubs = [];
+    var total_marks = [];
+    var totalCGPA = [];
+    var total_backlogs = [];
+    for(var i=0; i<counts.length; i++){ 
+      totalcreditsubs[i] = 0;
+      totalCGPA[i] = 0;
+      total_marks[i]=0;
+      total_backlogs[i]=0;%>
+    <div class="card1">
+        <span></span>
+        <span></span>
+        <span></span>   
+        <span></span>
+        <div class="card-inner-content">
+          <strong>B.Tech <%= toRoman(regulations[i][0].academic_year) %> Year <%= toRoman(regulations[i][0].academic_sem) %> Semester (<%= regulations[i][0].regulation %>) <%= regSep(regulations[i][0].reg_or_sup) %> Examinations, <%= regulations[i][0].exam_month %> <%= regulations[i][0].results_date.getFullYear() %> </strong>
+          <hr>
+          <div class="students">
+        <table class="students-table">
+            <tr style="color: aliceblue;">
+            <th >S.No</th>
+            <th>Subject Code</th>
+            <th>Subject Name</th>
+            <th>Internal <br>Marks</th>
+            <th>External <br> Marks</th>
+            <th>Total <br> Marks</th>
+            <th>Grades</th>
+            <th>Credits</th>
+            <th>Pass/Fail</th>
+            </tr>
+              <%for(var j =0; j<counts[i].row_count;j++){%>
+                <tr>
+                    <td ><%= j+1%></td>
+                    <td><%= regResults[i][j].subject_code.toUpperCase() %></td>
+                    <td><%= regResults[i][j].subject_name.toUpperCase() %></td>
+                    <td><%= regResults[i][j].internal_marks %></td>
+                    <td><%= regResults[i][j].external_marks %></td>
+                    <td><%= regResults[i][j].total_marks %></td>
+                    <td><%= regResults[i][j].grade.toUpperCase() %></td>
+                    <td><%= regResults[i][j].credits %></td>
+                    <td><%= regResults[i][j].pass_or_fail.toUpperCase() %></td>
+                </tr>
+                <%
+              
+              }%>
+                </table>
+                </div>
+        </div>
+        </div>
+        <%}%>
+      <div class="card11">
+        <span></span>
+        <span></span>
+        <span></span>   
+        <span></span>
+        <div class="card-inner-content">
+          <strong>Overall Performance</strong>
+          <hr>
+          <div class="students">
+          <table class="students-table">
+            <tr>
+            <th >S.No</th>
+            <th>Semester</th>
+            <th>Total Percentage</th>
+            <th>CGPA</th>
+            <th>Number of Backlogs</th>
+            </tr>
+            <% 
+            var Overall_Percentage=0;
+            var Overall_grade= 0;
+            var Overall_backlogs = 0;
+            var res = calculate_percentages(regResults);
+            for(var i = 0; i<8; i++){%>
+            <tr>
+                <td ><%= i+1%></td>
+                <td>B.Tech <%= i+1%> Semester </td>
+                <td><%= res.marks[i]/res.credit_subs[i]%></td>
+                <td><%= res.cgpa[i]/res.credit_subs[i]%></td>
+                <td><%= res.backlogs[i]%></td>
+                </tr>
+                
+                  <%
+                Overall_Percentage+=res.marks[i]/res.credit_subs[i];
+                Overall_grade+=res.cgpa[i]/res.credit_subs[i];
+                Overall_backlogs+=res.backlogs[i];
+                }%>
+            <tr>
+            <td colspan="2">Overall Performance</td>
+            <td><%= Overall_Percentage/8 %></td>
+            <td><%= Overall_grade/8 %></td>
+            <td><%= Overall_backlogs%></td>
+              </tr>
+            </table>
+        </div>
+        </div>
+      </div>
+        
+    
+  </section>
+  <script  src="./script1.js"></script>
+<script>
+inserted = document.getElementById('inserted').value;
+err = document.getElementById('err').value;
+if (inserted == 'false') { 
+      swal({
+        title: "Error!",
+        text: err,
+        icon: "error",
+        button: "OK"
+    }).then((value) => {
+      history.replaceState(null, null, '/students');
+    });
+   } 
+   else if(inserted == 'true') { 
+    swal({
+        title: "Success!",
+        text: "Student(s) inserted successfully",
+        icon: "success",
+        button: "OK"
+    }).then((value) => {
+      history.replaceState(null, null, '/students');
+    });
+   } 
+   function showUploaded(){
+    ifile = document.getElementById('studentExcelSheet').files[0];
+    if(ifile){
+      document.getElementById('uploadFile').innerHTML='<div class = "box-name" style="margin-top:4vh">File Uploaded<i class="bx bxs-checkbox-checked"></i></div><br><h6 class="box-name" style="text-align:center;font-size:10px;">click again to change file<h6>';
+    }
+   }
+
+</script>
+<%
+function calculate_percentages(regResults){
+    let marks = [0, 0, 0, 0, 0, 0, 0, 0];
+    let cgpa = [0, 0, 0, 0, 0, 0, 0, 0];
+    let credit_subs = [0, 0, 0, 0, 0, 0, 0, 0]; 
+    let backlogs = [0, 0, 0, 0, 0, 0, 0, 0];
+    for(let i = 0; i < regResults.length; i++) {
+      let r = regResults[i][0].regulation_id;
+      let c = regResults[i][0].credits; 
+      console.log("year-"+r[0]+" sem-"+r[1]+" r/s-"+parseInt(r[2]));
+      console.log(parseInt(r[0]) === 1 && parseInt(r[1]) === 1)
+      console.log("credits -> "+ c + " condition1->"+regResults[i][0].pass_or_fail+" "+(regResults[i][0].pass_or_fail === "FAIL") + " condition2->"+ regResults[i][0].reg_or_sup+" "+ (regResults[i][0].reg_or_sup == 1) + " condition3->"+ (c > 0))
+        if (parseInt(r[0]) === 1 && parseInt(r[1]) === 1) {
+          console.log("into 1________________________")
+            if (regResults[i][0].pass_or_fail === "FAIL" &&  regResults[i][0].reg_or_sup == 1 && c > 0) {
+                backlogs[0]++;
+                credit_subs[0]++;
+            } else if (regResults[i][0].pass_or_fail === "PASS"  && c > 0) {
+                credit_subs[0]++;
+                marks[0] += regResults[i][0].total_marks;
+                cgpa[0] += gradetogpa(regResults[i][0].grade)
+            }
+        } else if (parseInt(r[0]) === 1 && parseInt(r[1]) === 2) {
+          console.log("into 2________________________")
+            if (regResults[i][0].pass_or_fail === "FAIL" &&  regResults[i][0].reg_or_sup == 1 && c > 0) {
+                backlogs[1]++;
+                credit_subs[1]++;
+            } else if (regResults[i][0].pass_or_fail === "PASS"  && c > 0) {
+                credit_subs[1]++;
+                marks[1] += regResults[i][0].total_marks;
+                cgpa[1] += gradetogpa(regResults[i][0].grade)
+            }
+        } 
+        else if (parseInt(r[0]) === 2 && parseInt(r[1]) === 1) {
+          console.log("into 3________________________")
+            if (regResults[i][0].pass_or_fail === "FAIL" &&  regResults[i][0].reg_or_sup == 1 && c > 0) {
+                backlogs[2]++;
+                credit_subs[2]++;
+            } else if (regResults[i][0].pass_or_fail === "PASS"  && c > 0) {
+                credit_subs[2]++;
+                marks[2] += regResults[i][0].total_marks;
+                cgpa[2] += gradetogpa(regResults[i][0].grade)
+            }
+        } else if (parseInt(r[0]) === 2 && parseInt(r[1]) === 2) {
+          console.log("into 4________________________")
+            if (regResults[i][0].pass_or_fail === "FAIL" &&  regResults[i][0].reg_or_sup == 1 && c > 0) {
+                backlogs[3]++;
+                credit_subs[3]++;
+            } else if (regResults[i][0].pass_or_fail === "PASS"  && c > 0) {
+                credit_subs[3]++;
+                marks[3] += regResults[i][0].total_marks;
+                cgpa[3] += gradetogpa(regResults[i][0].grade)
+            }
+        } else if (parseInt(r[0]) === 3 && parseInt(r[1]) === 1) {
+          console.log("into 5________________________")
+            if (regResults[i][0].pass_or_fail === "FAIL" &&  regResults[i][0].reg_or_sup == 1 && c > 0) {
+                backlogs[4]++;
+                credit_subs[4]++;
+            } else if (regResults[i][0].pass_or_fail === "PASS"  && c > 0) {
+                credit_subs[4]++;
+                marks[4] += regResults[i][0].total_marks;
+                cgpa[4] += gradetogpa(regResults[i][0].grade)
+            }
+        } else if (parseInt(r[0]) === 3 && parseInt(r[1]) === 2) {
+          console.log("into 6____________________________")
+            if (regResults[i][0].pass_or_fail === "FAIL" &&  regResults[i][0].reg_or_sup == 1 && c > 0) {
+                backlogs[5]++;
+                credit_subs[0]++;
+            } else if (regResults[i][0].pass_or_fail === "PASS"  && c > 0) {
+                credit_subs[5]++;
+                marks[5] += regResults[i][0].total_marks;
+                cgpa[5] += gradetogpa(regResults[i][0].grade)
+            }
+        } else if (parseInt(r[0]) === 4 && parseInt(r[1]) === 1) {
+          console.log("into 7___________________________")
+            if (regResults[i][0].pass_or_fail === "FAIL" &&  regResults[i][0].reg_or_sup == 1 && c > 0) {
+                backlogs[6]++;
+                credit_subs[6]++;
+            } else if (regResults[i][0].pass_or_fail === "PASS"  && c > 0) {
+                credit_subs[6]++;
+                marks[6] += regResults[i][0].total_marks;
+                cgpa[6] += gradetogpa(regResults[i][0].grade)
+            }
+        } else if (parseInt(r[0]) === 4 && parseInt(r[1]) === 2) {
+          console.log("into 8__________________________")
+            if (regResults[i][0].pass_or_fail === "FAIL" &&  regResults[i][0].reg_or_sup == 1 && c > 0) {
+                backlogs[7]++;
+                credit_subs[7]++;
+            } else if (regResults[i][0].pass_or_fail === "PASS"  && c > 0) {
+                credit_subs[7]++;
+                marks[7] += regResults[i][0].total_marks;
+                cgpa[7] += gradetogpa(regResults[i][0].grade)
+            }
+        } 
+    }
+    return {marks, credit_subs, backlogs, cgpa}
+}
+%>
+
+</body>
+</html>

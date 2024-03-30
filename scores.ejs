@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JNTUACEK | Admin Results Portal</title>
+  <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'><link rel="stylesheet" href="./style.css">
+    <style>
+        @media (max-width: 420px) {
+            .modifications{
+                margin-left: 0px;
+                padding-left: 0%;
+                transform: translateX(0px);
+                width: 90%;
+            }
+            .modifications-table{
+                margin-left: 0px;
+                transform: translateX(300px);
+            }
+        }
+    </style>
+</head>
+<body onload="changeLink()">
+<div class="sidebar">
+  <div class="logo-details">
+    <div class="logo_name">ADMIN PORTAL</div>
+    <i class='bx bx-menu' id="btn"></i>
+  </div>
+  <ul class="nav-list">
+    <li>
+      <a href="/">
+        <i class='bx bx-grid-alt'></i>
+        <span class="links_name">Dashboard</span>
+      </a>
+      <span class="tooltip">Dashboard</span>
+    </li>
+   
+    <li>
+      <a href="/students">
+        <i class='bx bx-group'></i>
+        <span class="links_name">Students</span>
+      </a>
+      <span class="tooltip">Students</span>
+    </li>
+    <li>
+      <a href="/regulations">
+        <i class='bx bx-receipt'></i>
+        <span class="links_name">Regulations</span>
+      </a>
+      <span class="tooltip">Regulations</span>
+    </li>
+    <li>
+      <a href="/AdminResults">
+        <i class='bx bx-folder'></i>
+        <span class="links_name">Results</span>
+      </a>
+      <span class="tooltip">Results</span>
+    </li>
+    <li>
+      <a href="/backlogs">
+        <i class='bx bx-log-out-circle' ></i>
+        <span class="links_name">Backlogs</span>
+      </a>
+      <span class="tooltip">Backlogs</span>
+    </li>
+    <li>
+      <a href="/scores">
+        <i class='bx bx-objects-vertical-bottom'></i>
+        <span class="links_name">Scores</span>
+      </a>
+      <span class="tooltip">Scores</span>
+    </li>
+    <li class="profile">
+      <div class="profile-details">
+        <img src="https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg" alt="profileImg" class="profile-img">
+        <div class="name_job">
+          <div class="name">Admin </div>
+          <div class="job">JNTUACEK Results Admin</div>
+        </div>
+      </div>
+      <i class='bx bx-log-out' id="log_out"></i>
+    </li>
+  </ul>
+</div>
+<section class="home-section">
+  <div class="text">Scores</div>
+  <div class="all-options">
+    <div class="hr"></div>
+        <div class="filters">
+            <label for="studentLogs"> Show
+                <select name="studentLogs" id="studentLogs" onchange="changeLink()" >
+                    <option value="0">All</option>
+                    <option value="1">All Cleared</option>
+                    <option value="2">Not Cleared</option>
+                </select>
+                Students
+            </label>
+                <label for="from">Percentage From  
+                    <input type="number" name="from" id="from" oninput="changeLink()" value="0" min="0" max="99" placeholder="0">
+                    <label for="from"> to  
+                        <input type="number" name="to" id="to" oninput="changeLink()" value="100" min="1" max="100" placeholder="100">
+                        </label>
+                </label>
+    </div>
+    <div class="filters">
+        <label for="studentRows"> Show
+            <select name="studentRows" id="studentRows" onchange="changeLink()" >
+                <option value="100">100</option>
+                <option value="250">250</option>
+                <option value="500">500</option>
+                <option value="1000">1000</option>
+            </select>
+            Entries
+        </label>
+    <label for="studentSearch">Search: 
+        <input type="search" name="studentSearch" id="studentSearch" oninput="changeLink()"  placeholder="Roll Number/Branch..."></label>
+</div>
+</div>
+    <div class="modifications">
+        <table class="modifications-table">
+          <thead>
+            <tr>
+            <th>Roll Number</th>
+            <th>branch</th>
+            <th>Percentage</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+
+          </tbody>
+            
+        </table>
+  </div>
+  <div id="paging" class="paging"></div>
+</section>
+
+<!-- partial -->
+  <script  src="./script1.js"></script>
+  <script>
+    function changeLink(page) {
+      var fromInput = document.getElementById('from');
+      var toInput = document.getElementById('to');
+      var fromValue = parseInt(fromInput.value);
+      var toValue = parseInt(toInput.value);
+      if (fromValue >= toValue) {
+          fromInput.value = toValue - 1;
+      }
+  var searchTerm = document.getElementById('studentSearch').value;
+  var limit = document.getElementById('studentRows').value;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/getScores?search=' + searchTerm+'&limit='+limit+searchTerm+'&page='+page , true);
+  xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+              var responseData = JSON.parse(xhr.responseText);
+              updateData(responseData.rollNumbers, responseData.maxMarks, responseData.backlogRolls, responseData.passRolls, responseData.totalPages, responseData.currentPage, responseData.prevPage, responseData.nextPage);
+          } else {
+              console.error('Error fetching data:', xhr.status);
+          }
+      }
+  };
+  xhr.send();
+}
+function updateData(rollNumbers, maxMarks, backlogRolls, passRolls, totalPages, currentPage, prevPage, nextPage) {
+  var tableBody = document.getElementById('tableBody');
+  var min = parseInt(document.getElementById('from').value)||0;
+  var max = parseInt(document.getElementById('to').value)||100;
+  let log = parseInt(document.getElementById('studentLogs').value)||0;
+  tableBody.innerHTML = '';
+  if(rollNumbers.length === 0){tableBody.innerHTML = "No results Found";}
+  else{
+    cleared_ = cleared(backlogRolls, passRolls);
+    rollNumbers.forEach(function(roll) {
+    let Percentage = get_total(roll, maxMarks);
+    if(log === 0){
+        if(Percentage >= min && Percentage <= max){
+        var row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${roll}</td>
+            <td>${getbranch(roll)}</td>
+            <td>${Percentage}</td>
+        `;
+        tableBody.appendChild(row);
+    }}
+    if(log === 1){
+        if(Percentage >= min && Percentage <= max && cleared_.includes(roll)){
+        var row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${roll}</td>
+            <td>${getbranch(roll)}</td>
+            <td>${Percentage}</td>
+        `;
+        tableBody.appendChild(row);
+    }}
+    if(log === 2){
+        if(Percentage >= min && Percentage <= max && !(cleared_.includes(roll))){
+        var row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${roll}</td>
+            <td>${getbranch(roll)}</td>
+            <td>${Percentage}</td>
+        `;
+        tableBody.appendChild(row);
+    }}
+  });
+} 
+var paginationControls = document.getElementById('paging');
+    paginationControls.innerHTML = '';
+    if (prevPage || nextPage) {
+        var paginationHTML = 'Page ' + currentPage + ' of ' + totalPages + ' ';
+        if (prevPage) {
+            paginationHTML += '<span onclick="changeLink(' + prevPage + ')">Previous</span> ';
+        }
+        if (nextPage) {
+            paginationHTML += '<span onclick="changeLink(' + nextPage + ')">Next</span>';
+        }
+        paginationControls.innerHTML = paginationHTML;
+    }
+  }
+function get_total(rollNumber, maxMarks){
+    let max = 0;
+    let count = 0;
+    maxMarks.forEach(markRef => {
+        if(markRef["rollNo"] === rollNumber){
+          markRef['result'].forEach(mark => {
+            max+= mark.max_marks;
+            count+=1;
+          })
+        }
+    })
+    return max/count;
+}
+
+function cleared(backlogRolls, passRolls) {
+    let cleared = [];
+    for (let i in backlogRolls) {
+        if (backlogRolls[i] === 0 || backlogRolls[i] <= passRolls[i]) {
+            cleared.push(i);
+        }
+    }
+    return cleared;
+}
+
+function getbranch(str) {
+        switch(str.charAt(str.length - 3)){
+            case '1':
+                return "CIVIL";
+            case '2':
+                return "EEE";
+            case '3':
+                return "MECH";
+            case '4':
+                return "ECE";
+            case '5':
+                return "CSE";
+            case '7':
+                return "FDT";
+            default:
+                return "UNKNOWN BRANCH"
+        }
+}
+    </script>
+</body>
+</html>

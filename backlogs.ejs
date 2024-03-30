@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JNTUACEK | Admin Results Portal</title>
+  <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'><link rel="stylesheet" href="./style.css">
+    <style>
+        @media (max-width: 420px) {
+            .modifications{
+                margin-left: 0px;
+                padding-left: 0%;
+                transform: translateX(0px);
+                width: 90%;
+            }
+            .modifications-table{
+                margin-left: 0px;
+                transform: translateX(300px);
+            }
+        }
+    </style>
+</head>
+<body onload="changeLink()">
+<div class="sidebar">
+  <div class="logo-details">
+    <div class="logo_name">ADMIN PORTAL</div>
+    <i class='bx bx-menu' id="btn"></i>
+  </div>
+  <ul class="nav-list">
+    <li>
+      <a href="/">
+        <i class='bx bx-grid-alt'></i>
+        <span class="links_name">Dashboard</span>
+      </a>
+      <span class="tooltip">Dashboard</span>
+    </li>
+   
+    <li>
+      <a href="/students">
+        <i class='bx bx-group'></i>
+        <span class="links_name">Students</span>
+      </a>
+      <span class="tooltip">Students</span>
+    </li>
+    <li>
+      <a href="/regulations">
+        <i class='bx bx-receipt'></i>
+        <span class="links_name">Regulations</span>
+      </a>
+      <span class="tooltip">Regulations</span>
+    </li>
+    <li>
+      <a href="/AdminResults">
+        <i class='bx bx-folder'></i>
+        <span class="links_name">Results</span>
+      </a>
+      <span class="tooltip">Results</span>
+    </li>
+    <li>
+      <a href="/backlogs">
+        <i class='bx bx-log-out-circle' ></i>
+        <span class="links_name">Backlogs</span>
+      </a>
+      <span class="tooltip">Backlogs</span>
+    </li>
+    <li>
+      <a href="/scores">
+        <i class='bx bx-objects-vertical-bottom'></i>
+        <span class="links_name">Scores</span>
+      </a>
+      <span class="tooltip">Scores</span>
+    </li>
+    <li class="profile">
+      <div class="profile-details">
+        <img src="https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg" alt="profileImg" class="profile-img">
+        <div class="name_job">
+          <div class="name">Admin </div>
+          <div class="job">JNTUACEK Results Admin</div>
+        </div>
+      </div>
+      <i class='bx bx-log-out' id="log_out"></i>
+    </li>
+  </ul>
+</div>
+<section class="home-section">
+  <div class="text">Backlogs</div>
+  <div class="all-options">
+    <div class="hr"></div>
+        <div class="filters">
+        <label for="studentSearch">Search: 
+            <input type="search" name="studentSearch" id="studentSearch" oninput="changeLink()"  placeholder="Search Roll Number..."></label>
+    </div>
+</div>
+    <div class="modifications">
+        <table class="modifications-table">
+          <thead>
+            <tr>
+            <th rowspan="2">Roll Number</th>
+            <th colspan="8">Backlogs/Cleared</th>
+            <th rowspan="2">All Cleared?</th>
+            </tr>
+            <tr>
+            <th>Sem 1</th>
+            <th>Sem 2</th>
+            <th>Sem 3</th>
+            <th>Sem 4</th>
+            <th>Sem 5</th>
+            <th>Sem 6</th>
+            <th>Sem 7</th>
+            <th>Sem 8</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+
+          </tbody>
+            
+        </table>
+  </div>
+</section>
+  <script  src="./script1.js"></script>
+  <script>
+    function changeLink(page) {
+  var searchTerm = document.getElementById('studentSearch').value;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/getBacklogs?search=' + searchTerm , true);
+  xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+              var responseData = JSON.parse(xhr.responseText);
+              updateData(responseData.backlogSems, responseData.result2, responseData.backlogCounts, responseData.backlogPassCounts, responseData.rolls);
+          } else {
+              console.error('Error fetching data:', xhr.status);
+          }
+      }
+  };
+  xhr.send();
+}
+function updateData(backlogSems, result2, backlogCounts, backlogPassCounts, rolls) {
+  var tableBody = document.getElementById('tableBody');
+  matcher(backlogSems, result2, backlogCounts, backlogPassCounts, rolls);
+  }
+
+function giveIndex(num, bpassSems) {
+    const indices = [];
+    for (let i = 0; i < bpassSems.length; i++) {
+        if (num === bpassSems[i]) {
+            indices.push(i);
+        }
+    }
+    return indices;
+}
+
+function matcher(backlogSems, bpassSems, backlogCounts, backlogPasses, rolls) {
+  let html = '';
+    for (let i = 0; i < backlogSems.length; i++) {
+      html+="<tr>"
+        html += '<td>' + (rolls[i]) + '</td>';
+        const visited = [];
+        let all_cleared = "Yes";
+        let l = 1;
+        let j = 0;
+        while (l < 9) {
+            if (!backlogSems[i].includes(l) || j > backlogSems[i].length) {
+                html += '<td>0 / 0</td>';
+                l++;
+            } else if (backlogSems[i].includes(l) && !visited.includes(l)) {
+                visited.push(l);
+                if (bpassSems[i].includes(backlogSems[i][j])) {
+                    const k = giveIndex(backlogSems[i][j], bpassSems[i]);
+                    let s = 0;
+                    for (let m = 0; m < k.length; m++) {
+                        s += backlogPasses[i][m];
+                    }
+                    html += '<td>' + backlogCounts[i][j] + ' / ' + s + '</td>';
+                    l++;
+                    j++;
+                    console.log(s+" "+ backlogCounts[i][j]);
+                    if (backlogCounts[i][j] > s) {
+                        all_cleared = "No";
+                    }
+                } else {
+                    html += '<td>' + backlogCounts[i][j] + ' / 0</td>';
+                    l++;
+                    j++;
+                    all_cleared = "No";
+                }
+            }
+        }
+        html += '<td>' + all_cleared + '</td>';
+        html += '</tr>';
+
+        console.log(html); 
+    }
+    
+    tableBody.innerHTML = html;
+}
+
+    </script>
+</body>
+</html>
