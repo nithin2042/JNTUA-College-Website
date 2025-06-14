@@ -21,7 +21,23 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/', (req, res)=>{
+app.get('/', (req, res) => {
+    res.render('LoginPage');
+});
+
+app.post('/validateUser', (req, res)=> {
+    let user = req.body.facId||"";
+    let pass = req.body.pass||"";
+    if(user === "pass" && pass == "user"){
+        console.log("lets-go");
+        res.redirect('/dashboard')
+    }
+    else{
+        
+    }
+})
+
+app.get('/dashboard', (req, res)=>{
     pool.query('SELECT * from regulations ORDER BY results_date DESC LIMIT 15', (err, result, _fields) => {
         if(err){
             console.error(err);
@@ -796,106 +812,6 @@ function toRoman(num) {
 function regSep(reg_or_sup) {
     return reg_or_sup ? 'Regular/Supplementary' : 'Supplementary';
 }
-
-// app.get("/getScores", (req, res) => {
-//     const searchQuery = req.query.search || '';
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 10;
-//     const offset = (page - 1) * limit;
-
-//     pool.query(
-//         "SELECT DISTINCT roll_number FROM results WHERE roll_number IN (SELECT roll_number FROM all_students WHERE roll_number LIKE ? OR branch LIKE ?) LIMIT ? OFFSET ?",
-//         [`%${searchQuery}%`, `%${searchQuery}%`, limit, offset],
-//         (err, result, _fields) => {
-//             if (err) {
-//                 console.error("Error querying database for roll numbers:", err);
-//                 return res.status(500).send("Cannot get roll numbers");
-//             }
-//             pool.query("SELECT DISTINCT roll_number FROM results WHERE roll_number IN (SELECT roll_number FROM all_students WHERE roll_number LIKE ? OR branch LIKE ?)", [`%${searchQuery}%`, `%${searchQuery}%`], (err20, result20, _fields) => {
-//                 if(err20){
-//                     console.log("Error", err20)
-//                 }
-//                 Fcount = result20.length;
-//             })
-
-//             const rollNumbers = result.map(row => row.roll_number);
-//             let maxMarks = {};
-//             let count = 0;
-//             let backlogRolls = {};
-//             let passRolls = {};
-
-//             const handleResponse = () => {
-//                 if (
-//                     count === rollNumbers.length &&
-//                     Object.keys(backlogRolls).length === rollNumbers.length &&
-//                     Object.keys(passRolls).length === rollNumbers.length
-//                 ) {
-//                     const totalRecords = Fcount;
-//                     const totalPages = Math.ceil(totalRecords / limit);
-//                     const currentPage = page;
-//                     const prevPage = currentPage > 1 ? currentPage - 1 : null;
-//                     const nextPage = currentPage < totalPages ? currentPage + 1 : null;
-//                     res.json({
-//                         maxMarks,
-//                         rollNumbers,
-//                         backlogRolls,
-//                         passRolls,
-//                         totalPages,
-//                         currentPage,
-//                         prevPage,
-//                         nextPage
-//                     });
-//                 }
-//             };
-
-//             rollNumbers.forEach(rollNo => {
-//                 pool.query(
-//                     "SELECT subject_code, MAX(total_marks) as max_marks FROM results WHERE roll_number = ? GROUP BY subject_code",
-//                     [rollNo],
-//                     (err2, result2, _fields) => {
-//                         if (err2) {
-//                             console.error("Error querying database for max marks:", err2);
-//                             return res.status(500).send("Cannot get marks");
-//                         }
-
-//                         maxMarks[rollNo] = result2;
-//                         count++;
-//                         handleResponse();
-//                     }
-//                 );
-
-//                 pool.query(
-//                     "SELECT COUNT(*) as fail_count FROM results WHERE roll_number = ? AND pass_or_fail = 'FAIL' AND reg_or_sup = 1",
-//                     [rollNo],
-//                     (err3, result3, _fields) => {
-//                         if (err3) {
-//                             console.error("Error querying database for fail count:", err3);
-//                             backlogRolls[rollNo] = 0;
-//                         } else {
-//                             backlogRolls[rollNo] = result3[0].fail_count;
-//                         }
-//                         handleResponse();
-//                     }
-//                 );
-
-//                 pool.query(
-//                     "SELECT COUNT(*) as pass_count FROM results WHERE roll_number = ? AND pass_or_fail = 'PASS' AND reg_or_sup = 0",
-//                     [rollNo],
-//                     (err4, result4, _fields) => {
-//                         if (err4) {
-//                             console.error("Error querying database for pass count:", err4);
-//                             passRolls[rollNo] = 0;
-//                         } else {
-//                             passRolls[rollNo] = result4[0].pass_count;
-//                         }
-//                         handleResponse();
-//                     }
-//                 );
-//             });
-//         }
-//     );
-// });
-
 
 app.get("/getScores", async (req, res) => {
     try {
