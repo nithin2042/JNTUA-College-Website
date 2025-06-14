@@ -3,13 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./index.css">
     <title>Login page</title>
+    <style>
+        body{
+            background: url('https://wallpapers.com/images/featured/goku-4k-ultra-hd-b0njlom5wgg8gz9m.jpg');
+            backdrop-filter: brightness(40%);
+            height: 100vh;
+        }
+    </style>
 </head>
-<body>
-    <form action="/validateUser" method = "post">
-        <input type="text" name="facId" id="facId" placeholder = "Faculty ID...">
-        <input type="password" name="pass" id="pass" placeholder = "password">
-        <button type = "submit">Login</button>
-    </form>
+<body class = "placeCenter">
+    <div>
+        <form action="/validateUser" method = "post"  class = "flex-column loginForm">
+            <div><h1>Welcome to JNTUACEK results portal</h1></div>
+            <div class="flex-column"><label for="facId">Faculty ID please</label><input type="text" name="facId" id="facId" placeholder = "Faculty ID..."></div>
+            <div class = "flex-column"><label for="pass">Password please</label><input type="password" name="pass" id="pass" placeholder = "password"></div>
+            <div class = "placeCenter"><button type = "submit">Login</button></div>
+        </form>
+    </div>
+    <div class = 'placeholder-10vh'></div><div class = 'placeholder-10vh'></div>
 </body>
 </html>

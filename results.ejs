@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="results.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&amp;display=swap">
+    <title>Results View</title>
+</head>
+<body>
+    <nav>
+        <div class="flex-row hz-center ht">
+            <div class="logo-img">
+            </div>
+            <div class="flex-column go-down">
+                <div class="clg-text">
+                    <button class="button" data-text="Awesome">
+                        <span class="actual-text">&nbsp;JNTUACEK&nbsp;</span>
+                        <span aria-hidden="true" class="hover-text">&nbsp;JNTUACEK&nbsp;</span>
+                    </button>
+                </div>
+                <div class="clg-full-name">
+                    Jawaharlal Nehru Technological University Ananthapur <br>College of Engineering Kalikiri (Autonomous)
+                </div>
+            </div>
+        </div>
+        
+    </nav>
+    <div class="resultView middle">
+        <div class="roll" style="justify-content:space-evenly;">
+            <%
+                function toRoman(num) {
+                    const romanNumeralMap = {
+                        1: 'I',
+                        2: 'II',
+                        3: 'III',
+                        4: 'IV'
+                    };
+                
+                    return romanNumeralMap[num];
+                }
+                function regSep(num){
+                    const rs = {
+                        1 : "Regular/Supplementary",
+                        0 : "Supplementary"
+                    };
+                    return rs[num];
+                }
+                function gradetogpa(ch){
+                    const gd = {
+                        'S' : 10,
+                        'A' : 9,
+                        'B' : 8,
+                        'C' : 7,
+                        'D' : 6,
+                        'F' : 0
+                    }
+                    return gd[ch];
+                }
+                function gpatograde(num){
+                    const gd = {
+                        10 : 'S',
+                         9: 'A',
+                         8: 'B',
+                         7: 'C',
+                         6: 'D',
+                    }
+                    if(gd[num]){ return gd[num];}
+                    return 'F';
+                }
+            %>
+            <div class="regulation1">Title: 
+                <% regulations.forEach(function(regulation1) { %>
+                    B.Tech <%= toRoman(regulation1.academic_year) %> Year <%= toRoman(regulation1.academic_sem) %> Semester (<%= regulation1.regulation %>) <%= regSep(regulation1.reg_or_sup) %> Examinations, <%= regulation1.exam_month %> <%= regulation1.exam_year %> 
+                <% }); %>
+                </div>
+        </div>
+        <div class="st-det">
+            <div class="roll2"><b>ROLL NO :</b> <%= rollno %></div>
+            <div class="roll1"><b>NAME    :</b> <%= name %></div>
+        </div>
+        <div class="resultsTable">
+            <table>
+                <thead>
+                    <tr>
+                        <th>S. no</th>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Internal Marks (Max Marks: 30)</th>
+                        <th>External Marks (Max Marks: 70)</th>
+                        <th>Total Marks (Max Marks: 100)</th>
+                        <th>Grade</th>
+                        <th>Credits</th>
+                        <th>Pass/Fail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% var i=1 %>
+                    <% var j=0 %>
+                    <% var k="PASS" %>
+                    <% var Totgrade = 0 %>
+                    <% var total = 0 %>
+                    <% var totalCredits = 0 %>
+                        <% results.forEach(function(result) { %>
+                            <% totalCredits +=  result.credits %>
+                            <% if(result.grade !== "Y"){j+=1;total +=  result.total_marks;Totgrade+=gradetogpa(result.grade);} %>
+                            <tr>
+                            <td><%= i++ %></td>
+                            <td><%= result.subject_code %></td>
+                            <td><%= result.subject_name %></td>
+                            <td><%= result.internal_marks %></td>
+                            <td><%= result.external_marks %></td>
+                            <td><%= result.total_marks %></td>
+                            <td><%= result.grade %></td>
+                            <td><%= result.credits %></td>
+                            <td><%= result.pass_or_fail %></td>
+                            <% if(result.pass_or_fail === "FAIL"){k="FAIL";} %>
+                      </tr><%}); %>
+                    <tr class="OverallResults" <% if(k==="FAIL"){%>style="color:#dd1274;"<%}else{ %>style="color:#0a6522;"<% } %>>
+                        <td colspan="5">
+                            Overall Result
+                        </td>
+                        <td>
+                            <%= total %>/<%= j*100 %>
+                        </td>
+                        <td >
+                            <%= gpatograde(Math.floor(Totgrade/j)) %>
+                        </td>
+                        <td><%= totalCredits %></td>
+                        <td>
+                            <%= k %>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="flex-center">
+            <button onclick="window.print()" class="printer">Print</button>
+        </div>
+    </div>
+</body>
+</html>

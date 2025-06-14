@@ -152,6 +152,39 @@ nav{
   .button:hover .hover-text {
   width: 100%;
   }
+  .placeCenter{
+    display:  flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .placeholder-10vh{
+    height : 10vh;
+  }
+  .loginForm{
+    gap:2vh;
+    color: white;
+  }
+  .loginForm input{
+    width: 96%;
+    height: 2.5vh;
+    border: 2px solid dodgerblue;
+    outline: none;
+    color: rgb(0, 60, 255);
+    padding: 10px;
+  }
+  .loginForm input:focus{
+    border: 2px solid #0f0;
+    outline: none;
+  }
+  .loginForm button{
+    border: 2px solid dodgerblue;
+    padding: 10px;
+    outline: none;
+    color: white;
+    background-color: dodgerblue;
+    width : 100%;
+  }
   .clg-full-name{
   text-align: center;
   color: aliceblue;
@@ -179,6 +212,21 @@ nav{
      height:40px ;
      margin-block: 20px;
    }
+
+  #facLoginBtn{
+    border: 2px solid lightblue;
+    padding: 10px 15px;
+    outline: none;
+    background-color: #0f0;
+    color: white;
+    border-radius: 5%;
+    transform: translateY(-7vh) translateX(10vw);
+  }
+  #facLoginBtn a{
+    text-decoration: none;
+    color: white;
+    font-weight: bolder;
+  }
    @media (max-width:830px) {
     .button{
       font-size: 100px;
@@ -223,3 +271,5 @@ nav{
         padding-inline: 15px;
     }
   }
+
+ 

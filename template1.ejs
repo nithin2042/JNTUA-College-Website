@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+    <title>JNTUACEK | Results Portal</title>
+    <link rel="stylesheet" href="./index.css"/>
+</head>
+<body onload="changeLink()">
+    <nav>
+        <div class="flex-row hz-center ht">
+            <div class="logo-img">
+            </div>
+            <div class="flex-column">
+                <div class="clg-text">
+                    <button class="button" data-text="Awesome">
+                        <span class="actual-text">&nbsp;JNTUACEK&nbsp;</span>
+                        <span aria-hidden="true" class="hover-text">&nbsp;JNTUACEK&nbsp;</span>
+                    </button>
+                    <button id = 'facLoginBtn'>
+                        <a href="/login">Login <i class="fa fa-user"></i></a>
+                    </button>
+                </div>
+                <div class="clg-full-name">
+                    Jawaharlal Nehru Technological University Ananthapur <br>College of Engineering Kalikiri (Autonomous)
+                </div>
+            </div>
+        </div>
+        
+    </nav>
+    <div class="container latest-results mt-4">
+        <h4 class="text-center" id="latest_results_title"><b>Latest Results</b></h4>
+        <div class="result_search">
+            <label for="variable">
+                Show
+                <select name="variable" id="variable" onchange="changeLink()">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                Results
+            </label>
+            <label for="search">
+                Search:
+                <input type="search" name="search" id="search" oninput="changeLink()" placeholder=" Search...">
+            </label>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Result Links</th>
+                <th>Results Date</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+
+        </tbody>
+
+        </table>
+                <div class="paging" id="paging">
+                </div>
+            </div>
+            <script>
+function changeLink(page) {
+    var searchTerm = document.getElementById('search').value;
+    var limit = document.getElementById('variable').value;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/regulationData?search=' + searchTerm + '&limit=' + limit+ '&page=' + page, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                var responseData = JSON.parse(xhr.responseText);
+                updateData(responseData.regulations, responseData.totalPages, responseData.currentPage, responseData.prevPage, responseData.nextPage);
+            } else {
+                console.error('Error fetching data:', xhr.status);
+            }
+        }
+    };
+    xhr.send();
+  }
+  
+  function toRoman(num) {
+      const romanNumeralMap = {
+          1: 'I',
+          2: 'II',
+          3: 'III',
+          4: 'IV'
+      };
+  
+      return romanNumeralMap[num];
+  }
+  function regSep(num){
+      const rs = {
+          1 : "Regular/Supplementary",
+          0 : "Supplementary"
+      };
+      return rs[num];
+  }
+  function updateData(data, totalPages, currentPage, prevPage, nextPage) {
+    var tableBody = document.getElementById('tableBody');
+    var limit = document.getElementById('variable').value;
+    tableBody.innerHTML = '';
+    var index = (currentPage-1)*limit+1;
+    if(data.length === 0){tableBody.innerHTML = "No results Found";}
+    else{
+        var row=''
+    data.forEach(function(regulation1) {
+        var date = new Date(regulation1.results_date)
+        row+=`<tr>
+        <td> ${index++} </td>
+        <td>
+        <a href="form?id=${regulation1.link_id}">
+        B.Tech  ${toRoman( regulation1.academic_year)}  Year   ${toRoman( regulation1.academic_sem )} Semester ${(   regulation1.regulation )} ${regSep( regulation1.reg_or_sup )} Examinations, ${regulation1.exam_month}    ${regulation1.exam_year}  </a><br>
+        <td> ${date.toDateString()} </td></tr>`;
+   }); 
+        tableBody.innerHTML=row;
+    } 
+    var paginationControls = document.getElementById('paging');
+      paginationControls.innerHTML = '';
+      if (prevPage || nextPage) {
+          var paginationHTML = 'Page ' + currentPage + ' of ' + totalPages + ' ';
+          if (prevPage) {
+              paginationHTML += '<a onclick="changeLink(' + prevPage + ')">Previous</a> ';
+          }
+          if (nextPage) {
+              paginationHTML += '<a onclick="changeLink(' + nextPage + ')">Next</a>';
+          }
+          paginationControls.innerHTML = paginationHTML;
+      }
+  }
+</script>      
+</body>
+</html>

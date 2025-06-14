@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Montserrat:wght@800&amp;display=swap'>
+    <script src='https://unpkg.com/sweetalert/dist/sweetalert.min.js'></script>
+    <link rel="stylesheet" href="results.css">
+  <title>Results:  Enter Roll Number</title> 
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+</head>
+<body>
+    <nav>
+        <div class="flex-row hz-center ht">
+            <div class="logo-img">
+            </div>
+            <div class="flex-column">
+                <div class="clg-text">
+                    <button class="button" data-text="Awesome">
+                        <span class="actual-text">&nbsp;JNTUACEK&nbsp;</span>
+                        <span aria-hidden="true" class="hover-text">&nbsp;JNTUACEK&nbsp;</span>
+                    </button>
+                </div>
+                <div class="clg-full-name">
+                    Jawaharlal Nehru Technological University Ananthapur <br>College of Engineering Kalikiri (Autonomous)
+                </div>
+            </div>
+        </div>
+        
+    </nav>
+        <div class="results">
+            <%
+                function toRoman(num) {
+                    const romanNumeralMap = {
+                        1: 'I',
+                        2: 'II',
+                        3: 'III',
+                        4: 'IV'
+                    };
+                
+                    return romanNumeralMap[num];
+                }
+                function regSep(num){
+                    const rs = {
+                        1 : "Regular/Supplementary",
+                        0 : "Supplementary"
+                    };
+                    return rs[num];
+                }
+                %>
+            <div class="regulation">
+                <% regulations.forEach(function(regulation1) { %>
+                    B.Tech <%= toRoman(regulation1.academic_year) %> Year <%= toRoman(regulation1.academic_sem) %> Semester (<%= regulation1.regulation %>) <%= regSep(regulation1.reg_or_sup) %> Examinations, <%= regulation1.exam_month %> <%= regulation1.exam_year %> 
+                </div>
+                <% }); %>
+        <div class="roll-form login-form">
+            <form action="/submit?id=<%=id%>" method="post" class="middle">
+                <div class="roll">
+                    <label for="rollno" class="get-down"><b> Enter Roll Number : </b></label>
+                    <input type="text" name="rollno" id="rollno" class="Published-box roll-box" placeholder="Hallticket Number" required>
+                </div> 
+                <div class="captcha" id="captcha">
+                    <div class="captcha-form preview1">
+                    <div class="preview"></div>
+                    <button class="captcha-refresh">
+                        <i class="fa fa-refresh fa-spin"></i>
+                      </button>
+                    </div>
+                    <div class="captcha-form">
+                      <input type="text" id="captcha-form" placeholder="Enter captcha text">
+                        <div class="input-form btn-form">
+                            <button id="login-btn" class="ver-btn" type="button">
+                                Verify
+                            </button>
+                        </div>
+                    </div>
+                  </div>
+                <div class="submit">
+                    <button type="submit" id="login-btn1" class='cyan-hover'>
+                        View Result
+                        
+                    </button>
+                    <span class="tooltip">Verify Captcha to Enable this button</span>
+                </div>
+            
+            </form>
+            </div>
+        </div>  
+<script src="./script.js"></script>
+<script>
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    };
+
+var noresults = getUrlParameter('noresults');
+var id = getUrlParameter('id');
+console.log('noresults:', noresults); 
+if (noresults === '1') {
+    console.log('No results found. Displaying SweetAlert.'); 
+    Swal.fire({
+    title: "",
+    text: "No Results found for this Roll Number!",
+    icon: "error",
+    showCancelButton: false,
+    confirmButtonText: "OK",
+}).then((result) => {
+    if (result.isConfirmed) {
+            history.replaceState(null, null, '/form?id=' + id);
+    }
+});
+}
+
+</script>
+
+</body>
+</html>
